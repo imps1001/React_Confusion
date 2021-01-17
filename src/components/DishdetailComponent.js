@@ -23,7 +23,7 @@ function RenderDish({dish}) {
     );
   }
 
-function RenderComments({comments}) {
+function RenderComments({comments, addComment, dishId}) {
     if (comments != null) {
       return(
         <div className="col-12 col-md m-1">
@@ -42,7 +42,7 @@ function RenderComments({comments}) {
               );
               })}
           </ul>
-         <CommentForm />
+         <CommentForm dishId={dishId} addComment={addComment} />
         </div>
       );
     }
@@ -73,8 +73,7 @@ class CommentForm extends Component{
 
   handleSubmit(values) {
     this.toggleModal();
-    console.log('Current State is: ' + JSON.stringify(values));
-    alert('Current State is: ' + JSON.stringify(values));
+    this.props.addComment(this.props.dishId, values.rating, values.author, values.comment);
 }
   render() {
     return(
@@ -98,9 +97,9 @@ class CommentForm extends Component{
                         </Col>
                     </Row>
                     <Row className="form-group">
-                    <Label htmlFor="name" md={2}>Your Name</Label>
+                    <Label htmlFor="author" md={2}>Your Name</Label>
                       <Col md={10}>
-                      <Control.text model=".name" id="name" name="name"
+                      <Control.text model=".author" id="author" name="author"
                         placeholder="Your Name"
                         className="form-control"
                       validators={{
@@ -109,20 +108,20 @@ class CommentForm extends Component{
                         />
                         <Errors
                          className="text-danger"
-                          model=".name"
+                          model=".author"
                           show="touched"
                           messages={{
-                        required: 'Required',
-                        minLength: 'Must be greater than 2 characters',
+                        required: 'Required! ',
+                        minLength: ' "Must be greater than 2 characters"',
                         maxLength: 'Must be 15 characters or less'
                         }}
                       />
                       </Col>
                       </Row>
                             <Row className="form-group">
-                                <Label htmlFor="message" md={2}>Your Comment</Label>
+                                <Label htmlFor="comment" md={2}>Your Comment</Label>
                                 <Col md={10}>
-                                    <Control.textarea model=".message" id="message" name="message"
+                                    <Control.textarea model=".comment" id="comment" name="comment"
                                         rows="16"
                                         className="form-control" />
                                 </Col>
@@ -162,7 +161,9 @@ const  DishDetail = (props) => {
           <RenderDish dish={props.dish} />
           </div>
           <div className="col-12 col-md-5 m-1">
-          <RenderComments comments={props.comments} />
+          <RenderComments comments={props.comments} 
+          addComment={props.addComment}
+          dishId={props.dish.id}/>
           </div>
           </div>
         </div>
